@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>左右固定，中间自适应布局</title>
+    <style>
+        #demo{
+            width: 100%;
+        }
+        .container{
+            width: 100%;
+        }
+        .header,.footer{
+            background: red;
+            height: 100px;
+            text-align: center;
+            line-height: 100px;
+        }
+        .body{
+            width: 100%;
+            height:300px;
+            box-sizing: border-box;
+            padding: 0 100px;
+        }
+        .center,.left,.right{
+            float: left;
+        }
+        .center{
+            width: 100%;
+            height: 100%;
+            background: aquamarine;
+        }
+        .left {
+            width: 100px;
+            height: 100%;
+            background: yellow;
+            margin-left: -100%;
+            position: relative;
+            left: -100px;
+        }
+        .right{
+            width: 100px;
+            height: 100%;
+            background: antiquewhite;
+            position: relative;
+            margin-left: -100px;
+            left:100px;
+        }
+    </style>
+</head>
+<body>
+<div id="demo">
+    <h2>圣杯布局</h2>
+    <div class="container">
+        <div class="header">header</div>
+        <div class="body">
+            <div class="center">center</div>
+            <div class="left">left</div>
+            <div class="right">right</div>
+        </div>
+        <div class="footer">footer</div>
+    </div>
+</div>
+</body>
+</html>

@@ -52,7 +52,10 @@ Function.prototype.myBind = function (thisArg,...args) {
         const _this = this instanceof self ? this : thisArg;
         return self.apply(_this,[...args,...arguments])
     }
-    fn.prototype = this.prototype
+    const fun = function(){}
+    fun.prototype = this.prototype
+    fn.prototype = new fun()
+    //或者 fun.prototype = Object.create(this.prototype)
     return fn
 }
 function testBind(num1,num2){

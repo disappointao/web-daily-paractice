@@ -6,7 +6,11 @@ const PENDING = 'pending'
 
 class myPromise{
     constructor(executor) {
-        executor(this.resolve,this.reject)
+        try{
+            executor(this.resolve,this.reject)
+        }catch (e){
+            this.reject(e)
+        }
     }
     status = PENDING
     //成功值
@@ -22,7 +26,7 @@ class myPromise{
         this.status = FULFILLED
         this.value = value
         //判断回调是否存在，存在调用
-        while (this.successCb.length) this.successCb.shift()(value)
+        while (this.successCb.length) this.successCb.shift()()
     }
     reject = reason => {
         //如果状态不是等待中，则阻止程序继续执行
@@ -30,22 +34,56 @@ class myPromise{
         this.status = REJECTED
         this.reason = reason
         //判断回调是否存在，存在调用
-        while (this.failCb.length) this.failCb.shift()(reason)
+        while (this.failCb.length) this.failCb.shift()()
     }
     then = (successCb, failCb) => {
-        let newPromise = new myPromise((resovle,reject)=>{
+        //对then中为传递参数进行传递处理
+        successCb = successCb ? successCb : value => value
+        failCb = failCb ? failCb : reason => { throw reason}
+        let newPromise = new myPromise((resolve,reject)=>{
             if(this.status === FULFILLED){
-                //使用异步为了获取newPromise
-                setTimeout(()=>{
-                    //x 为成功时的返回对象
-                    let x = successCb(this.value)
-                    resolvePromise(newPromise ,x ,resovle,reject)
-                })
+                try{
+                    //使用异步为了获取newPromise
+                    setTimeout(()=>{
+                        //x 为成功时的返回对象
+                        let x = successCb(this.value)
+                        resolvePromise(newPromise ,x ,resolve,reject)
+                    },0)
+                }catch (e) {
+                    reject(e)
+                }
             }else if(this.status === REJECTED){
-                failCb(this.reason)
+                try{
+                    //使用异步为了获取newPromise
+                    setTimeout(()=>{
+                        //x 为成功时的返回对象
+                        let x = failCb(this.reason)
+                        resolvePromise(newPromise ,x ,resolve,reject)
+                    },0)
+                }catch (e) {
+                    reject(e)
+                }
             }else{
-                this.successCb.push(successCb)
-                this.failCb.push(failCb)
+                this.successCb.push(()=>{
+                    try {
+                        let x = successCb(this.value)
+                        resolvePromise(newPromise ,x ,resolve,reject)
+                    }catch (e){
+                        reject(e)
+                    }
+                })
+                this.failCb.push(()=>{
+                    try{
+                        //使用异步为了获取newPromise
+                        setTimeout(()=>{
+                            //x 为成功时的返回对象
+                            let x = failCb(this.reason)
+                            resolvePromise(newPromise ,x ,resolve,reject)
+                        },0)
+                    }catch (e) {
+                        reject(e)
+                    }
+                })
             }
         })
         return newPromise
@@ -63,14 +101,3 @@ function resolvePromise(promise,value,resolve,reject){
         resolve(value)
     }
 }
-
-let p = new  myPromise((resolve,reject)=>{
-    resolve('123')
-})
- var p1 = p.then(value=>{
-    console.log(value)
-    return p1
-},reason => {
-    console.log(reason)
-})
-p1.then(()=>{},reason => console.log(reason.message))

@@ -20,21 +20,33 @@
             counter++;
             console.log(counter)
         }
-
-        function myDebounce(fn, time) {
-            let timer = null
-            return function() {
-                let context = this
-                let arg = arguments
-                if(timer !== null){
-                    clearTimeout(timer)
-                    timer = null
-                }
-                timer = setTimeout(()=>{
-                    fn.apply(context, arg)
-                }, time)
+        function myDebounce(fun, delay){
+          let timer = null
+          return function (){
+            if(timer !== null){
+              clearTimeout(timer)
+              timer = null
             }
+            timer = setTimeout(() => {
+              fun.apply(this, arguments)
+            },delay)
+          }
         }
+
+        // function myDebounce(fn, time) {
+        //     let timer = null
+        //     return function() {
+        //         let context = this
+        //         let arg = arguments
+        //         if(timer !== null){
+        //             clearTimeout(timer)
+        //             timer = null
+        //         }
+        //         timer = setTimeout(()=>{
+        //             fn.apply(context, arg)
+        //         }, time)
+        //     }
+        // }
     }
 </script>
 </body>

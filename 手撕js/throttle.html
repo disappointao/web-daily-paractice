@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>节流</title>
+</head>
+<body>
+<div>
+    <input type="text" id="user"/>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+<script>
+  window.onload = function() {
+    let input = document.querySelector("#user")
+    let counter = 0
+    input.oninput = myThrottle(onInput,500)
+    // input.oninput = _.throttle(onInput,2000)
+    function onInput(e){
+      console.log(this,e)
+      counter++;
+      console.log(counter)
+    }
+    function myThrottle(fun, delay){
+      let curTime = Date.now()
+      return function () {
+        let nowTime = Date.now()
+        if(nowTime - curTime > delay){
+          curTime = Date.now()
+          fun.apply(this, arguments)
+        }
+      }
+    }
+
+  }
+</script>
+</body>
+</html>
